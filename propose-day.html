@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💍🐱 Happy Propose Day, Vanu!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;1,400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0a0005;
+            overflow-x: hidden;
+            font-family: 'Lora', serif;
+            color: #ffeef0;
+            min-height: 100vh;
+            cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'><text y='18' font-size='18'>🐾</text></svg>"), auto;
+        }
+
+        /* Background */
+        .bg-glow { position: fixed; border-radius: 50%; filter: blur(90px); opacity: 0.12; z-index: 0; animation: floatGlow 8s ease-in-out infinite alternate; }
+        @keyframes floatGlow { 0% { transform: translate(0,0) scale(1); } 100% { transform: translate(30px,-30px) scale(1.2); } }
+
+        /* Sparkles */
+        .sparkle { position: fixed; width: 4px; height: 4px; background: #fff; border-radius: 50%; pointer-events: none; z-index: 1; animation: twinkle ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1); } }
+
+        .day-badge { position: fixed; top: 20px; right: 20px; font-family: 'Caveat', cursive; font-size: 0.85rem; letter-spacing: 2px; color: rgba(231, 76, 111, 0.4); writing-mode: vertical-rl; z-index: 100; }
+
+        /* Main container */
+        .container { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; padding: 40px 20px 60px; text-align: center; min-height: 100vh; }
+
+        .title { font-family: 'Great Vibes', cursive; font-size: clamp(2.2rem, 7vw, 4.5rem); color: #e74c6f; text-shadow: 0 0 40px rgba(231,76,111,0.5), 0 0 80px rgba(231,76,111,0.3); margin-bottom: 8px; animation: fadeInUp 1s ease-out 0.2s both; }
+        .subtitle { font-family: 'Caveat', cursive; font-size: clamp(1rem, 3vw, 1.4rem); color: #f5a0b1; letter-spacing: 2px; margin-bottom: 10px; animation: fadeInUp 1s ease-out 0.4s both; }
+        .instruction { font-family: 'Caveat', cursive; font-size: clamp(0.85rem, 2.2vw, 1rem); color: rgba(245,160,177,0.5); margin-bottom: 35px; animation: fadeInUp 1s ease-out 0.6s both; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(25px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Animals Row */
+        .animals-row {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: clamp(8px, 2.5vw, 20px);
+            margin-bottom: 40px;
+            animation: fadeInUp 1s ease-out 0.8s both;
+            flex-wrap: wrap;
+        }
+
+        .animal-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .animal-slot:hover { transform: translateY(-10px); }
+        .animal-slot:hover .animal-circle { border-color: rgba(231,76,111,0.6); box-shadow: 0 0 30px rgba(231,76,111,0.3); }
+
+        .animal-circle {
+            width: clamp(65px, 15vw, 95px);
+            height: clamp(65px, 15vw, 95px);
+            border-radius: 50%;
+            border: 2px solid rgba(231,76,111,0.25);
+            background: rgba(231,76,111,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(2rem, 5vw, 3rem);
+            transition: all 0.4s ease;
+            margin-bottom: 8px;
+        }
+
+        .animal-circle.cat-circle {
+            width: clamp(80px, 18vw, 115px);
+            height: clamp(80px, 18vw, 115px);
+            border-color: rgba(231,76,111,0.45);
+            background: rgba(231,76,111,0.1);
+            font-size: clamp(2.5rem, 6vw, 3.8rem);
+            box-shadow: 0 0 20px rgba(231,76,111,0.15);
+        }
+
+        .animal-name {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(0.7rem, 2vw, 0.9rem);
+            color: rgba(245,160,177,0.5);
+            transition: all 0.3s;
+        }
+
+        .animal-slot:hover .animal-name { color: #f5a0b1; }
+
+        .animal-slot.selected .animal-circle {
+            border-color: #e74c6f;
+            background: rgba(231,76,111,0.15);
+            box-shadow: 0 0 35px rgba(231,76,111,0.4);
+        }
+
+        /* Proposal popup */
+        .proposal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(5,0,2,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .proposal-overlay.show { display: flex; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .proposal-card {
+            background: linear-gradient(135deg, rgba(231,76,111,0.1), rgba(192,57,43,0.05));
+            border: 1px solid rgba(231,76,111,0.2);
+            border-radius: 28px;
+            padding: 40px 35px;
+            max-width: 420px;
+            width: 90%;
+            text-align: center;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+        }
+
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .proposal-animal { font-size: 4rem; margin-bottom: 15px; animation: bounce 1s ease-in-out infinite; }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .proposal-rose { font-size: 2.5rem; margin-bottom: 15px; animation: roseAppear 0.8s ease-out 0.3s both; }
+        @keyframes roseAppear { from { transform: scale(0) rotate(-45deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+
+        .proposal-question {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #e74c6f;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(231,76,111,0.3);
+        }
+
+        .proposal-buttons { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
+
+        .btn {
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-family: 'Caveat', cursive;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: none;
+            font-weight: 600;
+        }
+
+        .btn-yes {
+            background: linear-gradient(135deg, #e74c6f, #c0392b);
+            color: white;
+            box-shadow: 0 4px 20px rgba(231,76,111,0.4);
+        }
+        .btn-yes:hover { transform: scale(1.08); box-shadow: 0 6px 30px rgba(231,76,111,0.6); }
+
+        .btn-no {
+            background: rgba(231,76,111,0.1);
+            color: #f5a0b1;
+            border: 1px solid rgba(231,76,111,0.3);
+        }
+        .btn-no:hover { background: rgba(231,76,111,0.2); }
+
+        /* Rejection message */
+        .rejection-msg {
+            display: none;
+            font-family: 'Caveat', cursive;
+            font-size: 1.3rem;
+            color: #f5a0b1;
+            margin-top: 15px;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* Cat expanding stages */
+        .cat-stage {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 60;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .cat-stage.show { display: flex; }
+
+        .expanding-heart {
+            font-size: 3rem;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .expanding-heart.stage1 { font-size: 3rem; }
+        .expanding-heart.stage2 { font-size: 5rem; }
+        .expanding-heart.stage3 { font-size: 8rem; }
+
+        .stage-text {
+            font-family: 'Great Vibes', cursive;
+            color: #e74c6f;
+            text-shadow: 0 0 30px rgba(231,76,111,0.5);
+            margin-bottom: 20px;
+            transition: all 0.5s ease;
+        }
+
+        .stage-hint {
+            font-family: 'Caveat', cursive;
+            font-size: 0.9rem;
+            color: rgba(245,160,177,0.4);
+            margin-top: 15px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+        /* CELEBRATION */
+        .celebration {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 70;
+            background: radial-gradient(ellipse at center, #1a0008 0%, #0a0002 100%);
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .celebration.show { display: flex; }
+
+        .celebration-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(2rem, 7vw, 4rem);
+            color: #e74c6f;
+            text-shadow: 0 0 50px rgba(231,76,111,0.6), 0 0 100px rgba(231,76,111,0.3);
+            z-index: 75;
+            animation: celebTitle 1s ease-out both;
+            text-align: center;
+            padding: 0 20px;
+        }
+        @keyframes celebTitle { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .celebration-sub {
+            font-family: 'Caveat', cursive;
+            font-size: clamp(1rem, 3vw, 1.4rem);
+            color: #f5a0b1;
+            z-index: 75;
+            margin-top: 10px;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .celebration-msg {
+            font-family: 'Lora', serif;
+            font-style: italic;
+            font-size: clamp(0.85rem, 2.2vw, 1rem);
+            color: #ffd5dc;
+            max-width: 500px;
+            line-height: 1.8;
+            z-index: 75;
+            margin-top: 25px;
+            padding: 0 25px;
+            animation: fadeInUp 1s ease-out 1s both;
+            text-align: center;
+        }
+
+        .celebration-from {
+            font-family: 'Great Vibes', cursive;
+            font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+            color: #e74c6f;
+            z-index: 75;
+            margin-top: 20px;
+            animation: fadeInUp 1s ease-out 1.5s both;
+        }
+
+        .dancing-cat {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 72;
+            animation-fill-mode: both;
+            pointer-events: none;
+        }
+
+        @keyframes danceCat {
+            0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            25% { transform: translateY(60vh) rotate(90deg); }
+            50% { transform: translateY(30vh) rotate(180deg); }
+            75% { transform: translateY(50vh) rotate(270deg); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+        }
+
+        @keyframes sway {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            z-index: 71;
+            pointer-events: none;
+            animation: confettiFall linear forwards;
+        }
+        @keyframes confettiFall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* Status indicators */
+        .status-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            animation: fadeInUp 1s ease-out 1s both;
+        }
+
+        .status-badge {
+            font-family: 'Caveat', cursive;
+            font-size: 0.8rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: rgba(231,76,111,0.05);
+            border: 1px solid rgba(231,76,111,0.15);
+            color: rgba(245,160,177,0.4);
+            transition: all 0.3s;
+        }
+
+        .status-badge.rejected {
+            background: rgba(231,76,111,0.08);
+            border-color: rgba(231,76,111,0.3);
+            color: rgba(245,160,177,0.6);
+            text-decoration: line-through;
+        }
+
+        .status-badge.accepted {
+            background: rgba(231,76,111,0.2);
+            border-color: #e74c6f;
+            color: #e74c6f;
+            box-shadow: 0 0 15px rgba(231,76,111,0.3);
+        }
+
+        /* Bottom message */
+        .bottom-msg {
+            margin-top: 30px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: clamp(0.8rem, 2vw, 0.95rem);
+            color: rgba(245,160,177,0.35);
+            max-width: 450px;
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+
+        .walking-cat { position: fixed; bottom: 15px; font-size: 1.8rem; z-index: 3; animation: walkCat 12s linear infinite; filter: drop-shadow(0 0 8px rgba(231,76,111,0.4)); }
+        @keyframes walkCat { 0% { left: -50px; transform: scaleX(1); } 49% { transform: scaleX(1); } 50% { left: calc(100% + 50px); transform: scaleX(-1); } 99% { transform: scaleX(-1); } 100% { left: -50px; transform: scaleX(1); } }
+
+        @media (max-width: 480px) {
+            .animals-row { gap: 6px; }
+            .proposal-card { padding: 30px 22px; }
+            .day-badge { font-size: 0.7rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow" style="width: 400px; height: 400px; background: #e74c6f; top: -100px; left: -100px;"></div>
+    <div class="bg-glow" style="width: 300px; height: 300px; background: #c0392b; bottom: -50px; right: -50px; animation-delay: 3s;"></div>
+    <div class="bg-glow" style="width: 250px; height: 250px; background: #ff6b8a; top: 50%; left: 50%; animation-delay: 5s;"></div>
+
+    <div class="day-badge">8 Feb · Propose Day 💍</div>
+    <div class="walking-cat">🐈</div>
+
+    <div class="container">
+        <h1 class="title">Happy Propose Day, Vanu 💍</h1>
+        <p class="subtitle">6 admirers are lined up for you... 🐾</p>
+        <p class="instruction">~ tap on each one to hear what they have to say ~</p>
+
+        <!-- Animals Row -->
+        <div class="animals-row">
+            <div class="animal-slot" data-animal="dog" data-emoji="🐶" onclick="openProposal('dog')">
+                <div class="animal-circle">🐶</div>
+                <div class="animal-name">Doggo</div>
+            </div>
+            <div class="animal-slot" data-animal="rabbit" data-emoji="🐰" onclick="openProposal('rabbit')">
+                <div class="animal-circle">🐰</div>
+                <div class="animal-name">Bunny</div>
+            </div>
+            <div class="animal-slot" data-animal="elephant" data-emoji="🐘" onclick="openProposal('elephant')">
+                <div class="animal-circle">🐘</div>
+                <div class="animal-name">Elly</div>
+            </div>
+            <div class="animal-slot" data-animal="cat" data-emoji="🐱" onclick="openProposal('cat')">
+                <div class="animal-circle cat-circle">🐱</div>
+                <div class="animal-name" style="color: #f5a0b1; font-size: clamp(0.8rem, 2.2vw, 1rem);">Your Cat-o 💕</div>
+            </div>
+            <div class="animal-slot" data-animal="horse" data-emoji="🐴" onclick="openProposal('horse')">
+                <div class="animal-circle">🐴</div>
+                <div class="animal-name">Pony</div>
+            </div>
+            <div class="animal-slot" data-animal="penguin" data-emoji="🐧" onclick="openProposal('penguin')">
+                <div class="animal-circle">🐧</div>
+                <div class="animal-name">Pengu</div>
+            </div>
+        </div>
+
+        <!-- Status Row -->
+        <div class="status-row" id="statusRow">
+            <div class="status-badge" id="status-dog">🐶 waiting...</div>
+            <div class="status-badge" id="status-rabbit">🐰 waiting...</div>
+            <div class="status-badge" id="status-elephant">🐘 waiting...</div>
+            <div class="status-badge" id="status-cat">🐱 waiting...</div>
+            <div class="status-badge" id="status-horse">🐴 waiting...</div>
+            <div class="status-badge" id="status-penguin">🐧 waiting...</div>
+        </div>
+
+        <div class="bottom-msg">
+            "Every love story is beautiful, but ours is my favorite." 🐾<br>
+            <span style="font-size: 0.8em; opacity: 0.6;">Hint: only one of them is the right one... you know which 😼</span>
+        </div>
+    </div>
+
+    <!-- Proposal Overlay -->
+    <div class="proposal-overlay" id="proposalOverlay">
+        <div class="proposal-card">
+            <div class="proposal-animal" id="proposalAnimal">🐶</div>
+            <div class="proposal-rose">🌹</div>
+            <div class="proposal-question" id="proposalQuestion">Will you be my special someone?</div>
+            <div class="proposal-buttons">
+                <button class="btn btn-yes" id="btnYes" onclick="handleYes()">Yes! 💕</button>
+                <button class="btn btn-no" id="btnNo" onclick="handleNo()">No 😅</button>
+            </div>
+            <div class="rejection-msg" id="rejectionMsg"></div>
+        </div>
+    </div>
+
+    <!-- Cat Expanding Stage -->
+    <div class="cat-stage" id="catStage">
+        <div class="stage-text" id="stageText" style="font-size: clamp(1.5rem, 4vw, 2rem);">You said yes! 💕</div>
+        <div class="expanding-heart stage1" id="expandingHeart" onclick="expandMore()">🐱💕</div>
+        <div class="stage-hint" id="stageHint">tap to feel the love grow...</div>
+    </div>
+
+    <!-- Celebration -->
+    <div class="celebration" id="celebration">
+        <div class="celebration-title">She Said YES to her Cat-o! 🐱💍</div>
+        <div class="celebration-sub">Vanu & Dehit — the purrfect match 🐾</div>
+        <div class="celebration-msg">
+            You know why every other animal got a "no"?<br><br>
+            Because none of them could ever love you the way your Cat-o does.
+            Not the doggo with all his loyalty, not the bunny with all her cuteness,
+            not even the elephant who never forgets.<br><br>
+            Only your Cat-o knows exactly how to make you smile,
+            how to annoy you just right, and how to love you just the way you are.<br><br>
+            So here's my proposal: let me be your Cat-o forever. Deal? 🐾💕
+        </div>
+        <div class="celebration-from">Forever yours, Dehit 🐱♥</div>
+    </div>
+
+    <script>
+        let currentAnimal = null;
+        let catStageCount = 0;
+        const rejectionMessages = {
+            dog: ["Woof... 😢 The doggo walks away with a broken heart", "Smart choice! Dogs are too needy anyway 😼"],
+            rabbit: ["The bunny hops away sadly... 🐰💔", "Good call! Rabbits eat your cables 😼"],
+            elephant: ["Elly never forgets this rejection... 🐘😢", "Wise! Elephants take up too much space 😼"],
+            horse: ["The pony trots away dramatically... 🐴💔", "Correct! Horses can't even fit in the house 😼"],
+            penguin: ["Pengu slides away on his tears... 🐧😢", "Right! Penguins live too far away 😼"],
+        };
+
+        const yesMessages = {
+            dog: "Wait... are you sure? The doggo is wagging his tail but... 🐶",
+            rabbit: "The bunny is happy but... are you really sure? 🐰",
+            elephant: "Elly is celebrating but... think again? 🐘",
+            horse: "The pony is galloping with joy but... really? 🐴",
+            penguin: "Pengu is dancing but... you sure about this? 🐧",
+        };
+
+        function openProposal(animal) {
+            currentAnimal = animal;
+            const overlay = document.getElementById('proposalOverlay');
+            const animalEl = document.getElementById('proposalAnimal');
+            const questionEl = document.getElementById('proposalQuestion');
+            const rejMsg = document.getElementById('rejectionMsg');
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+
+            rejMsg.style.display = 'none';
+            btnYes.style.display = 'inline-block';
+            btnNo.style.display = 'inline-block';
+
+            const emojis = { dog: '🐶', rabbit: '🐰', elephant: '🐘', cat: '🐱', horse: '🐴', penguin: '🐧' };
+            animalEl.textContent = emojis[animal];
+
+            if (animal === 'cat') {
+                questionEl.innerHTML = 'Will you be my Catu? 🐱💕';
+                btnYes.textContent = 'YES! Always! 💕';
+            } else {
+                questionEl.innerHTML = 'Will you be my special someone? 🌹';
+                btnYes.textContent = 'Yes! 💕';
+            }
+
+            overlay.classList.add('show');
+        }
+
+        function closeOverlay() {
+            document.getElementById('proposalOverlay').classList.remove('show');
+        }
+
+        function handleNo() {
+            if (currentAnimal === 'cat') {
+                // Can't say no to cat!
+                const rejMsg = document.getElementById('rejectionMsg');
+                rejMsg.style.display = 'block';
+                rejMsg.innerHTML = "Nope! You can't say no to your Cat-o! Try again 😼💕";
+                document.getElementById('btnNo').style.display = 'none';
+                return;
+            }
+
+            const rejMsg = document.getElementById('rejectionMsg');
+            const msgs = rejectionMessages[currentAnimal];
+            rejMsg.style.display = 'block';
+            rejMsg.innerHTML = msgs[Math.floor(Math.random() * msgs.length)];
+
+            document.getElementById('btnYes').style.display = 'none';
+            document.getElementById('btnNo').style.display = 'none';
+
+            // Update status
+            const badge = document.getElementById('status-' + currentAnimal);
+            const emojis = { dog: '🐶', rabbit: '🐰', elephant: '🐘', horse: '🐴', penguin: '🐧' };
+            badge.textContent = emojis[currentAnimal] + ' rejected 💔';
+            badge.classList.add('rejected');
+
+            setTimeout(closeOverlay, 2000);
+        }
+
+        function handleYes() {
+            if (currentAnimal === 'cat') {
+                // Cat gets YES — start expanding!
+                closeOverlay();
+
+                // Reject all others automatically
+                ['dog', 'rabbit', 'elephant', 'horse', 'penguin'].forEach(a => {
+                    const badge = document.getElementById('status-' + a);
+                    const emojis = { dog: '🐶', rabbit: '🐰', elephant: '🐘', horse: '🐴', penguin: '🐧' };
+                    badge.textContent = emojis[a] + ' nope!';
+                    badge.classList.add('rejected');
+                });
+
+                const catBadge = document.getElementById('status-cat');
+                catBadge.textContent = '🐱 YES! 💕';
+                catBadge.classList.add('accepted');
+
+                catStageCount = 0;
+                document.getElementById('catStage').classList.add('show');
+                document.getElementById('catStage').style.background = 'rgba(5,0,2,0.9)';
+                updateCatStage();
+                return;
+            }
+
+            // Non-cat yes — auto switch to no
+            const rejMsg = document.getElementById('rejectionMsg');
+            rejMsg.style.display = 'block';
+            rejMsg.innerHTML = yesMessages[currentAnimal] + "<br><br><em style='font-size:0.9rem; color:rgba(245,160,177,0.5);'>...nah, just kidding. Auto-selecting NO 😼</em>";
+
+            document.getElementById('btnYes').style.display = 'none';
+            document.getElementById('btnNo').style.display = 'none';
+
+            // Update status to rejected
+            setTimeout(() => {
+                const badge = document.getElementById('status-' + currentAnimal);
+                const emojis = { dog: '🐶', rabbit: '🐰', elephant: '🐘', horse: '🐴', penguin: '🐧' };
+                badge.textContent = emojis[currentAnimal] + ' rejected 💔';
+                badge.classList.add('rejected');
+                closeOverlay();
+            }, 2500);
+        }
+
+        function updateCatStage() {
+            const heart = document.getElementById('expandingHeart');
+            const text = document.getElementById('stageText');
+            const hint = document.getElementById('stageHint');
+
+            if (catStageCount === 0) {
+                text.innerHTML = 'You said YES! 💕';
+                text.style.fontSize = 'clamp(1.5rem, 4vw, 2rem)';
+                heart.className = 'expanding-heart stage1';
+                heart.innerHTML = '🐱💕';
+                hint.textContent = 'tap the cat to feel the love grow...';
+            }
+        }
+
+        function expandMore() {
+            catStageCount++;
+            const heart = document.getElementById('expandingHeart');
+            const text = document.getElementById('stageText');
+            const hint = document.getElementById('stageHint');
+            const stage = document.getElementById('catStage');
+
+            if (catStageCount === 1) {
+                heart.className = 'expanding-heart stage2';
+                heart.innerHTML = '🐱💕🐱';
+                text.innerHTML = 'The love is growing...';
+                text.style.fontSize = 'clamp(1.8rem, 5vw, 2.5rem)';
+                hint.textContent = 'keep tapping...';
+                stage.style.background = 'radial-gradient(ellipse at center, rgba(231,76,111,0.08) 0%, rgba(5,0,2,0.95) 100%)';
+            } else if (catStageCount === 2) {
+                heart.className = 'expanding-heart stage3';
+                heart.innerHTML = '🐱💕💕💕🐱';
+                text.innerHTML = 'Almost there...!';
+                text.style.fontSize = 'clamp(2rem, 6vw, 3rem)';
+                hint.textContent = 'one more tap... 🐾';
+                stage.style.background = 'radial-gradient(ellipse at center, rgba(231,76,111,0.15) 0%, rgba(5,0,2,0.95) 100%)';
+            } else if (catStageCount === 3) {
+                // CELEBRATION TIME!
+                stage.classList.remove('show');
+                startCelebration();
+            }
+        }
+
+        function startCelebration() {
+            const celeb = document.getElementById('celebration');
+            celeb.classList.add('show');
+
+            // Dancing cats
+            const catEmojis = ['🐱', '😺', '😸', '😻', '🐈', '😽', '🐾', '💕', '🌹', '✨'];
+            let catCount = 0;
+            const catInterval = setInterval(() => {
+                if (catCount > 80) { clearInterval(catInterval); return; }
+                const cat = document.createElement('div');
+                cat.className = 'dancing-cat';
+                cat.textContent = catEmojis[Math.floor(Math.random() * catEmojis.length)];
+                cat.style.left = Math.random() * window.innerWidth + 'px';
+                cat.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                cat.style.animation = `danceCat ${Math.random() * 4 + 3}s ease-in-out ${Math.random() * 2}s forwards, sway ${Math.random() * 1 + 0.5}s ease-in-out infinite`;
+                celeb.appendChild(cat);
+                setTimeout(() => cat.remove(), 8000);
+                catCount++;
+            }, 100);
+
+            // Confetti
+            const colors = ['#e74c6f', '#ff6b8a', '#f5a0b1', '#ffd5dc', '#c0392b', '#ff8fa3', '#ffffff'];
+            let confettiCount = 0;
+            const confettiInterval = setInterval(() => {
+                if (confettiCount > 100) { clearInterval(confettiInterval); return; }
+                const conf = document.createElement('div');
+                conf.className = 'confetti';
+                conf.style.left = Math.random() * window.innerWidth + 'px';
+                conf.style.background = colors[Math.floor(Math.random() * colors.length)];
+                conf.style.width = (Math.random() * 8 + 5) + 'px';
+                conf.style.height = (Math.random() * 8 + 5) + 'px';
+                conf.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                conf.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                conf.style.animationDelay = (Math.random() * 3) + 's';
+                celeb.appendChild(conf);
+                setTimeout(() => conf.remove(), 8000);
+                confettiCount++;
+            }, 50);
+        }
+
+        // Sparkles
+        function createSparkle() {
+            const sparkle = document.createElement('div');
+            sparkle.classList.add('sparkle');
+            sparkle.style.left = Math.random() * window.innerWidth + 'px';
+            sparkle.style.top = Math.random() * window.innerHeight + 'px';
+            sparkle.style.animationDuration = (Math.random() * 2 + 1) + 's';
+            sparkle.style.animationDelay = Math.random() * 2 + 's';
+            const size = Math.random() * 3 + 2;
+            sparkle.style.width = size + 'px';
+            sparkle.style.height = size + 'px';
+            sparkle.style.boxShadow = `0 0 ${size*2}px rgba(255,255,255,0.7)`;
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 4000);
+        }
+        setInterval(createSparkle, 400);
+        for (let i = 0; i < 15; i++) setTimeout(createSparkle, i * 120);
+    </script>
+</body>
+</html>
